@@ -1,0 +1,10 @@
+name: Shiny_StatCalculator
+account: collier
+server: shinyapps.io
+appId: 127724
+bundleId: 567899
+url: https://collier.shinyapps.io/Shiny_StatCalculator/
+when: 1474822580.5058
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: shinyPresentation.Rmd
