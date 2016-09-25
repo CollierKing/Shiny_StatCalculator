@@ -1,0 +1,82 @@
+statCalc
+========================================================
+author: 
+date: 
+autosize: true
+
+First Slide
+========================================================
+
+For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+Slide With Code
+========================================================
+
+```{r}
+library(shiny)
+
+shinyApp (
+  shinyUI(
+    navbarPage("Stat Calculator for Marketing Research",
+               tabPanel("Sample Size", uiOutput('page1'))
+    )
+  ),
+  
+  shinyServer(function(input, output, session) {
+    
+    
+    output$page1 <- renderUI({
+      sidebarLayout(
+        sidebarPanel(
+          tags$head( tags$script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full", type = 'text/javascript'),
+                     tags$script( "MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});", type='text/x-mathjax-config')),
+          radioButtons("radio", label = h3("Compute Sample Size Needed For:"),
+                       choices = list("A - Estimation of Sample Proportion - Discrete Variable" = 1, 
+                                      "B - Estimation of Sample Mean - Continuous Variable" = 2)),
+          
+          numericInput("num1", label = h5("Enter Desired Margin of Error $$ \\large\\ e $$"), value = .05),
+          
+          numericInput("num2", label = h5("Enter Population Standard Deviation $$ \\large\\sigma $$"), value = 100)
+          
+          
+        ),
+        mainPanel(
+            
+            withMathJax(helpText("Formula A - Use when e is a percentage, ex: 5% $$ \\large\\ n=\\frac{1}{e^2}$$ Formula B - Use when e is a continuous variable, ex: 100 $$ \\large\\ n=\\frac{4*\\sigma^2}{e^2}$$")),
+            
+          output$text2 <- renderText({
+            "Sample Size:"
+          }),
+          
+          output$value4646 <- renderPrint({
+            if ((input$radio==1)){
+              
+              
+              1/(input$num1^2)
+              # "Sample Size Formula (: $$ \\Huge\\frac{1}{e^2}$$"
+              
+            } else { 
+              4*(input$num2^2)/(input$num1^2)
+              
+            }
+          })
+            )
+        )
+      
+    })
+
+    
+    })
+)
+```
+
+Slide With Plot
+========================================================
+
+```{r, echo=FALSE}
+plot(cars)
+```
