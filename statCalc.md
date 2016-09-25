@@ -1,26 +1,43 @@
-statCalc
+Statistical Calculator for Marketing Research
 ========================================================
-author: 
-date: 
+author: Collier King
+date: 9/25/2016
 autosize: true
 
-First Slide
+Introduction
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+This presentation introduces a statistical calculator made for marketing research.  A wide variety of marketing research tasks rely on statistical inference.
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+Three such areas covered by this calculator's functionality are:
 
-Slide With Code
+* Sample Size Computation
+* A/B Testing
+* Margin of Error Computation
+
+The following slides will describe the functionality of the calculator and the formulas used.
+
+This view the calculator on the web, please visit: https://collier.shinyapps.io/Shiny_StatCalculator/
+
+Sample Size Computation
 ========================================================
 
+![some caption](SampleSize.png)
 
+A/B Testing
+========================================================
 
+![some caption](ABTesting.png)
 
+Margin of Error Computation
+========================================================
 
-```
-Error in appshot.shiny.appobj(list(httpHandler = function (req)  : 
-  appshot of Shiny app objects is not yet supported.
-```
+![some caption](MarginError.png)
+
+Conclusion
+========================================================
+Again, you may access this calculator at:
+https://collier.shinyapps.io/Shiny_StatCalculator/
+
+Thank you for your interest,
+Collier
