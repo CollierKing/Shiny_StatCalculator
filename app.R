@@ -1,11 +1,18 @@
 library(shiny)
+library(dplyr)
+library(ggplot2)
+library(xlsx)
+library(broom)
+
+rm(list = ls())
 
 shinyApp (
   shinyUI(
     navbarPage("Stat Calculator for Marketing Research",
                tabPanel("Sample Size", uiOutput('page1')),
                tabPanel("A/B Testing", uiOutput('page2')),
-               tabPanel("Margin of Error", uiOutput('page3'))
+               tabPanel("Margin of Error", uiOutput('page3')),
+               tabPanel("Price Elasticity", uiOutput('page4'))
     )
   ),
   
@@ -141,7 +148,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- pnorm(zScore)
+                          pVal <- 2*pnorm(zScore)
                           
                           pVal
                           
@@ -160,7 +167,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- pnorm(zScore)
+                          pVal <- 2*pnorm(zScore)
                           if (pVal > .9 | pVal < .1){
                             "TRUE"
                           }
@@ -179,7 +186,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- pnorm(zScore)
+                          pVal <- 2*pnorm(zScore)
                           if (pVal > .95 | pVal < .05){
                             "TRUE"
                           }
@@ -198,7 +205,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- pnorm(zScore)
+                          pVal <- 2*pnorm(zScore)
                           if (pVal > .99 | pVal < .01){
                             "TRUE"
                           }
@@ -223,7 +230,7 @@ shinyApp (
                         withMathJax(helpText("Standard Error Formula Test Group $$\\large\\ SE_t = \\sqrt{\\frac{Resp_t}{Resp_c}*(1-\\frac{Yield_t}{Pop_t})}$$")),
                         
                         
-                        withMathJax(helpText("P-Value calculated with R function pnorm on Z-Score value"))
+                        withMathJax(helpText("2-Sided P-Value calculated with 2 * pnorm(Z)"))
                         
                  )
                )
@@ -274,7 +281,7 @@ shinyApp (
                         
                         output$valueCI4254 <- renderPrint({
                           
-                          (input$sampResp1/input$sampSize1) - (1.95*(sqrt((input$sampResp1/input$sampSize1)*(1-((input$sampResp1/input$sampSize1)))/input$sampSize1)))
+                          (input$sampResp1/input$sampSize1) - (1.96*(sqrt((input$sampResp1/input$sampSize1)*(1-((input$sampResp1/input$sampSize1)))/input$sampSize1)))
                           
                         }),
                         
@@ -286,7 +293,7 @@ shinyApp (
                         
                         output$valueCI42547 <- renderPrint({
                           
-                          (input$sampResp1/input$sampSize1) + (1.95*(sqrt((input$sampResp1/input$sampSize1)*(1-((input$sampResp1/input$sampSize1)))/input$sampSize1)))
+                          (input$sampResp1/input$sampSize1) + (1.96*(sqrt((input$sampResp1/input$sampSize1)*(1-((input$sampResp1/input$sampSize1)))/input$sampSize1)))
                           
                         }),
                         
@@ -300,7 +307,7 @@ shinyApp (
                         
                         output$me27272744 <- renderPrint({
                           
-                          ((input$sampResp1/input$sampSize1) + (1.95*(sqrt((input$sampResp1/input$sampSize1)*(1-((input$sampResp1/input$sampSize1)))/input$sampSize1)))) - (input$sampResp1/input$sampSize1)
+                          ((input$sampResp1/input$sampSize1) + (1.96*(sqrt((input$sampResp1/input$sampSize1)*(1-((input$sampResp1/input$sampSize1)))/input$sampSize1)))) - (input$sampResp1/input$sampSize1)
                           
                         }),
                         
@@ -374,7 +381,135 @@ shinyApp (
       
     })
     
-    
-    
-    })
+    output$page4 <- renderUI({
+      
+      fixedRow(
+        column(5,
+               "",
+               fileInput('file1', 'Choose CSV File:',
+                         accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv', "xlsx")),
+               
+               selectInput("filetype", label = h4("File Type:"), 
+                           choices = list("XLSX/XLS/XLSM"=1, "CSV"=2)),
+               
+               numericInput("tabnum", "Select sheet number", 1),
+               textInput("demandCol","Demand Column - Q",""),
+               textInput("priceCol","Price Column - P",""),
+               
+               
+               
+               output$contents <- renderTable({    
+                 
+                 
+                 if(is.null(input$file1))return()
+                 
+                 if (input$filetype==2){
+                   
+                   inFile <- input$file1
+                   data2<-read.csv(inFile$datapath)
+                   
+                 } else {
+                   
+                   inFile <- input$file1
+                   k <- input$tabnum
+                   data2<-read.xlsx2(inFile$datapath,k)
+                   
+                 }
+            
+
+                 # data2 <- as.data.frame(data2)
+                 assign('data',data2,envir=.GlobalEnv)
+                 # print(str(data))
+                 head(data)
+                 # names(data)
+               }),
+               
+               output$table <- renderTable({
+                
+                 if(is.null(input$file1))return()
+       
+                 d <- input$demandCol
+                 p <- input$priceCol
+                 
+                 # as.numeric(levels(casino$slot))[casino$slot]
+                 
+                 d.dat <- as.numeric(levels(data[,d]))[data[,d]]
+                 d.dat <- log(d.dat)
+                 
+                 p.dat <- as.numeric(levels(data[,p]))[data[,p]]
+                 p.dat <- log(p.dat)
+                 
+                 newdata <- as.data.frame(cbind(d.dat,p.dat))
+                 colnames(newdata) <- c("LogDemand","LogPrice")
+                 assign('newdata',newdata,envir=.GlobalEnv)
+                 head(newdata)
+                 # str(newdata)
+
+                 
+               })
+                ),
+        column(5,
+               "View Regression Results",
+               actionButton("goButton",
+                            "Run", value = FALSE),
+               
+               output$table1489 <- renderTable({
+                 
+                 if(input$goButton){
+                        
+                 
+                 fit <- lm(newdata$LogDemand ~ newdata$LogPrice,data=newdata)
+                 # fit1 <- glance(fit)
+                 fit2 <- tidy(fit)
+                 assign('fit2',fit2,envir=.GlobalEnv)
+                 fit2
+                 
+                 }
+
+               }),
+               
+               output$text1 <- renderText({
+                       
+                if(input$goButton){
+                       
+               statement <- paste0("For every 1% increase in Price, we expect a ",
+                                   round(fit2$estimate[2],4), " unit change in demand.")
+                                  
+               statement
+                }
+               
+               })
+               
+      ),
+        column(5,
+               "",
+               output$chart1 <- renderPlot({
+                 
+                 if(input$goButton) {
+                 
+                 g1 <- ggplot(newdata,aes(LogDemand,LogPrice)) +
+                   geom_point() +
+                   geom_smooth(method="lm") + 
+                   ggtitle("Price VS Demand")
+                 g1
+                 
+                 }
+                 
+               })),
+      
+      column(5,
+             "",
+             
+             withMathJax(helpText(" Regression formula to solve for: $$\\large\\beta $$"),
+                         
+                         withMathJax(helpText("$$\\large\\ \\log Q = \\alpha + \\beta \\log P  $$")))
+      )
+                
+      )
+
+})
+  })
 )
+    
+
+
