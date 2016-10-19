@@ -12,7 +12,15 @@ shinyApp (
                tabPanel("Sample Size", uiOutput('page1')),
                tabPanel("A/B Testing", uiOutput('page2')),
                tabPanel("Margin of Error", uiOutput('page3')),
-               tabPanel("Price Elasticity", uiOutput('page4'))
+               tabPanel("Price Elasticity", uiOutput('page4')),
+               
+               tags$footer(("© 2016 - "),
+                           tags$a(
+                             href="https://github.com/c0llier",
+                             target="_blank",
+                             "Collier D. King."),
+                           align = "center")
+               
     )
   ),
   
@@ -107,7 +115,7 @@ shinyApp (
                         })
                  ),
                  column(5,
-                        "Lift Percent:", offset = 1,
+                        "Test Group Lift Percent:", offset = 1,
                         output$Value4416871467 <- renderPrint({
                           ((input$testCR/input$testCP) - (input$numCR/input$numCP))/ (input$numCR/input$numCP)
                         })
@@ -148,7 +156,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- 2*pnorm(zScore)
+                          pVal <- pnorm(zScore)
                           
                           pVal
                           
@@ -167,7 +175,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- 2*pnorm(zScore)
+                          pVal <- pnorm(zScore)
                           if (pVal > .9 | pVal < .1){
                             "TRUE"
                           }
@@ -186,7 +194,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- 2*pnorm(zScore)
+                          pVal <- pnorm(zScore)
                           if (pVal > .95 | pVal < .05){
                             "TRUE"
                           }
@@ -205,7 +213,7 @@ shinyApp (
                           stdErrorControl <- sqrt(((cntRsp/cntPop)*(1-(cntRsp/cntPop))/cntPop))
                           stdErrorTest <- sqrt(((tstRsp/tstPop)*(1-(tstRsp/tstPop))/tstPop))
                           zScore <- (cntYld - tstYld)/sqrt((stdErrorControl^2)+(stdErrorTest^2))
-                          pVal <- 2*pnorm(zScore)
+                          pVal <- pnorm(zScore)
                           if (pVal > .99 | pVal < .01){
                             "TRUE"
                           }
@@ -230,7 +238,7 @@ shinyApp (
                         withMathJax(helpText("Standard Error Formula Test Group $$\\large\\ SE_t = \\sqrt{\\frac{Resp_t}{Resp_c}*(1-\\frac{Yield_t}{Pop_t})}$$")),
                         
                         
-                        withMathJax(helpText("2-Sided P-Value calculated with 2 * pnorm(Z)"))
+                        withMathJax(helpText("2-Sided P-Value calculated with pnorm(Z)"))
                         
                  )
                )
@@ -473,7 +481,7 @@ shinyApp (
                 if(input$goButton){
                        
                statement <- paste0("For every 1% increase in Price, we expect a ",
-                                   round(fit2$estimate[2],4), " unit change in demand.")
+                                   round(fit2$estimate[2],4), "% change in demand.")
                                   
                statement
                 }

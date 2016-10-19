@@ -2,9 +2,9 @@ name: Shiny_StatCalculator
 account: collier
 server: shinyapps.io
 appId: 127724
-bundleId: 578181
+bundleId: 584121
 url: https://collier.shinyapps.io/Shiny_StatCalculator/
-when: 1475729152.6319
+when: 1476244414.72225
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: ABTesting.png|MarginError.png|README.md|SampleSize.png|statCalc.html|statCalc.md|statCalc.Rpres

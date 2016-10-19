@@ -5,4 +5,4 @@ Link to Calculator App:
 https://collier.shinyapps.io/Shiny_StatCalculator/
 
 Presentation Slides:
-https://c0llier.github.io/Shiny_StatCalculator/statCalc.html#/
+https://collierking.github.io/Shiny_StatCalculator/statCalc.html#/
